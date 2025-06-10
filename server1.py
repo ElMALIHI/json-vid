@@ -51,18 +51,23 @@ security = HTTPBearer()
 
 async def verify_api_key(
     request: Request,
-    credentials: HTTPAuthorizationCredentials = Security(security, auto_error=False)
+    credentials: HTTPAuthorizationCredentials = Security(security)
 ):
     # Allow access to documentation without authentication
     if request.url.path in ["/docs", "/redoc", "/openapi.json", "/health", "/"]:
         return None
         
-    if not credentials or credentials.credentials != settings.API_KEY:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid API key"
-        )
-    return credentials.credentials
+    try:
+        if not credentials or credentials.credentials != settings.API_KEY:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid API key"
+            )
+        return credentials.credentials
+    except HTTPException:
+        if request.url.path in ["/docs", "/redoc", "/openapi.json", "/health", "/"]:
+            return None
+        raise
 
 # Enhanced Enums
 class TransitionType(str, Enum):

@@ -14,7 +14,11 @@ RUN apt-get update && apt-get install -y \
     libmagickwand-dev \
     fonts-dejavu \
     fonts-liberation \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip
+RUN pip install --no-cache-dir --upgrade pip
 
 # Configure ImageMagick policy
 RUN for policy_file in /etc/ImageMagick*/policy.xml; do \
