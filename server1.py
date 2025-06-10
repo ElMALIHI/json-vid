@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, BackgroundTasks, File, UploadFile, Form, Depends, Security, status
+from fastapi import FastAPI, HTTPException, BackgroundTasks, File, UploadFile, Form, Depends, Security, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
@@ -49,8 +49,15 @@ for directory in [settings.UPLOAD_DIR, settings.GENERATED_DIR, settings.TEMP_DIR
 # Security
 security = HTTPBearer()
 
-async def verify_api_key(credentials: HTTPAuthorizationCredentials = Security(security)):
-    if credentials.credentials != settings.API_KEY:
+async def verify_api_key(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials = Security(security, auto_error=False)
+):
+    # Allow access to documentation without authentication
+    if request.url.path in ["/docs", "/redoc", "/openapi.json", "/health", "/"]:
+        return None
+        
+    if not credentials or credentials.credentials != settings.API_KEY:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid API key"
@@ -232,7 +239,10 @@ app = FastAPI(
     title="Enhanced Video Composition API",
     version="2.0.0",
     description="Advanced API for creating videos from images, audio, and video clips with transitions, effects, and overlays",
-    lifespan=lifespan
+    lifespan=lifespan,
+    docs_url="/docs",  # Enable Swagger UI documentation
+    redoc_url="/redoc",  # Enable ReDoc documentation
+    openapi_url="/openapi.json"  # Enable OpenAPI schema
 )
 
 # Add CORS middleware
