@@ -1,0 +1,32 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Media files (these will be mounted as volumes)
+uploads/*
+!uploads/.gitkeep
+generated/*
+!generated/.gitkeep
+temp/*
+!temp/.gitkeep
+
+# Environment
+.env
+.env.*
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Documentation
+*.md
+!README.md
