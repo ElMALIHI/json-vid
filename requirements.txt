@@ -29,7 +29,7 @@ python-jose[cryptography]==3.5.0
 passlib[bcrypt]==1.7.4
 bcrypt==4.3.0
 cryptography==45.0.4
-hiredis==2.0.0
+hiredis==2.0.0 --prefer-binary
 
 # Database
 sqlalchemy==2.0.39
