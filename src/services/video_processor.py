@@ -94,8 +94,16 @@ class VideoProcessor:
         return output_path
 
     async def _process_scene(self, scene: Scene, temp_dir: Path) -> VideoFileClip:
-        """Process a single scene."""
-        media_path = Path(scene.media_path)
+        """Process a single scene. Accepts local file paths or URLs."""
+        import re
+        from ..utils.file_handlers import download_remote_file
+
+        media_path_str = scene.media_path
+        # Check if media_path is a URL
+        if re.match(r'^https?://', media_path_str):
+            # Download the file and use the local path
+            media_path_str = await download_remote_file(media_path_str)
+        media_path = Path(media_path_str)
         
         if media_path.suffix.lower() in settings.ALLOWED_VIDEO_TYPES:
             clip = VideoFileClip(str(media_path))
