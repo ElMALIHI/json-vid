@@ -1,11 +1,13 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks, File, UploadFile, Form, Depends, Security, status, Request
-from fastapi.security import HTTPBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from typing import List, Optional, Dict, Any
 import logging
 import uuid
 from datetime import datetime
+from pathlib import Path
+import aiofiles
 
 from ..core.config import settings
 from ..models.schemas import (
